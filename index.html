@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Family Health Plans | NOSH7</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Noto+Sans+Gujarati:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --warm-bg: #fdf8ef;
+    --warm-card: #ffffff;
+    --primary: #047857;
+    --primary-light: #d1fae5;
+    --accent: #c2410c;
+    --accent-light: #ffedd5;
+    --danger: #b91c1c;
+    --danger-light: #fee2e2;
+    --info: #1e40af;
+    --info-light: #dbeafe;
+    --text: #1f2937;
+    --muted: #6b7280;
+  }
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--warm-bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+  }
+  body.lang-gu, body.lang-gu * {
+    font-family: 'Noto Sans Gujarati', sans-serif !important;
+  }
+  .disease-card {
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+  }
+  .disease-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  }
+  .pill-btn {
+    transition: all 0.15s;
+    cursor: pointer;
+  }
+  .pill-btn:hover { background: #f3f4f6; }
+  .pill-btn.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+  }
+  .section-card {
+    border-radius: 16px;
+    padding: 1.25rem;
+  }
+  .item-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px dashed rgba(0,0,0,0.06);
+    line-height: 1.5;
+  }
+  .item-row:last-child { border-bottom: none; }
+  .icon-circle {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 14px;
+    margin-top: 2px;
+  }
+  .lang-toggle button.active {
+    background: white;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    color: var(--primary);
+    font-weight: 600;
+  }
+  /* image card hidden offscreen for html2canvas */
+  #share-card {
+    position: fixed;
+    left: -9999px;
+    top: 0;
+    width: 1080px;
+    background: white;
+    padding: 60px;
+    font-family: 'Poppins', sans-serif;
+  }
+  #share-card.lang-gu, #share-card.lang-gu * {
+    font-family: 'Noto Sans Gujarati', sans-serif !important;
+  }
+  .share-section { padding: 24px; border-radius: 20px; margin-bottom: 18px; }
+  .share-section h3 { font-size: 32px; font-weight: 700; margin-bottom: 14px; }
+  .share-section li { font-size: 24px; line-height: 1.5; padding: 6px 0; list-style: none; padding-left: 28px; position: relative; }
+  .share-section li::before { content: '•'; position: absolute; left: 8px; font-weight: bold; }
+  @keyframes slideIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .fade-in { animation: slideIn 0.3s ease; }
+</style>
+</head>
+<body class="lang-hi min-h-screen">
+
+<!-- HEADER -->
+<header class="bg-white border-b border-amber-100 sticky top-0 z-40">
+  <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <div class="w-9 h-9 rounded-full bg-emerald-700 text-white flex items-center justify-center font-bold">N7</div>
+      <div>
+        <div class="font-bold text-emerald-800 leading-tight" data-i18n="brandTitle">NOSH7 Health Plans</div>
+        <div class="text-xs text-gray-500" data-i18n="brandSub">Simple plans for your family</div>
+      </div>
+    </div>
+    <div class="lang-toggle bg-gray-100 rounded-full p-1 flex text-sm">
+      <button class="active px-3 py-1 rounded-full" onclick="setLang('hi')">Hinglish</button>
+      <button class="px-3 py-1 rounded-full" onclick="setLang('gu')">ગુજરાતી</button>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-5xl mx-auto px-4 py-6 pb-24">
+
+  <!-- SCREEN 1: HOME -->
+  <section id="screen-home">
+    <div class="text-center mb-8 mt-4">
+      <h1 class="text-2xl md:text-3xl font-bold text-emerald-900 mb-2" data-i18n="heroTitle"></h1>
+      <p class="text-gray-600 max-w-xl mx-auto" data-i18n="heroSub"></p>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+      <!-- cards injected by JS -->
+    </div>
+  </section>
+
+  <!-- SCREEN 2: QUESTIONS -->
+  <section id="screen-questions" hidden class="fade-in">
+    <button onclick="goHome()" class="text-sm text-gray-600 mb-4 flex items-center gap-1">
+      <span>←</span> <span data-i18n="back"></span>
+    </button>
+    <div class="bg-white rounded-2xl p-5 md:p-7 shadow-sm">
+      <div class="flex items-center gap-3 mb-5">
+        <div id="q-icon" class="text-3xl"></div>
+        <h2 id="q-disease" class="text-xl md:text-2xl font-bold text-emerald-900"></h2>
+      </div>
+      <p class="text-gray-600 mb-6" data-i18n="qIntro"></p>
+
+      <!-- Q1 Age -->
+      <div class="mb-5">
+        <label class="block font-semibold mb-2" data-i18n="qAge"></label>
+        <div id="q-age" class="flex flex-wrap gap-2"></div>
+      </div>
+      <!-- Q2 Duration -->
+      <div class="mb-5">
+        <label class="block font-semibold mb-2" data-i18n="qDuration"></label>
+        <div id="q-duration" class="flex flex-wrap gap-2"></div>
+      </div>
+      <!-- Q3 Activity -->
+      <div class="mb-6">
+        <label class="block font-semibold mb-2" data-i18n="qActivity"></label>
+        <div id="q-activity" class="flex flex-wrap gap-2"></div>
+      </div>
+
+      <button id="generate-btn" onclick="showPlan()" disabled
+        class="w-full bg-emerald-700 disabled:bg-gray-300 text-white py-3 rounded-xl font-semibold text-base hover:bg-emerald-800 transition">
+        <span data-i18n="generatePlan"></span>
+      </button>
+    </div>
+  </section>
+
+  <!-- SCREEN 3: PLAN -->
+  <section id="screen-plan" hidden class="fade-in">
+    <button onclick="goHome()" class="text-sm text-gray-600 mb-4 flex items-center gap-1">
+      <span>←</span> <span data-i18n="back"></span>
+    </button>
+
+    <div class="bg-white rounded-2xl p-5 md:p-7 shadow-sm mb-4">
+      <div class="flex items-center gap-3 mb-2">
+        <div id="p-icon" class="text-4xl"></div>
+        <div>
+          <h2 id="p-disease" class="text-xl md:text-2xl font-bold text-emerald-900"></h2>
+          <p class="text-sm text-gray-500" data-i18n="planSub"></p>
+        </div>
+      </div>
+      <div id="personal-note" class="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-900" hidden></div>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-4">
+      <div class="section-card" style="background: var(--primary-light);">
+        <div class="flex items-center gap-2 mb-3">
+          <div class="w-9 h-9 rounded-full bg-emerald-600 text-white flex items-center justify-center text-lg">✓</div>
+          <h3 class="text-lg font-bold text-emerald-900" data-i18n="eat"></h3>
+        </div>
+        <div id="p-eat"></div>
+      </div>
+
+      <div class="section-card" style="background: var(--danger-light);">
+        <div class="flex items-center gap-2 mb-3">
+          <div class="w-9 h-9 rounded-full bg-red-600 text-white flex items-center justify-center text-lg">✕</div>
+          <h3 class="text-lg font-bold text-red-900" data-i18n="avoid"></h3>
+        </div>
+        <div id="p-avoid"></div>
+      </div>
+
+      <div class="section-card" style="background: var(--accent-light);">
+        <div class="flex items-center gap-2 mb-3">
+          <div class="w-9 h-9 rounded-full bg-orange-600 text-white flex items-center justify-center text-lg">🧘</div>
+          <h3 class="text-lg font-bold text-orange-900" data-i18n="yoga"></h3>
+        </div>
+        <div id="p-yoga"></div>
+      </div>
+
+      <div class="section-card" style="background: var(--info-light);">
+        <div class="flex items-center gap-2 mb-3">
+          <div class="w-9 h-9 rounded-full bg-blue-700 text-white flex items-center justify-center text-lg">💡</div>
+          <h3 class="text-lg font-bold text-blue-900" data-i18n="lifestyle"></h3>
+        </div>
+        <div id="p-lifestyle"></div>
+      </div>
+    </div>
+
+    <div class="mt-6 grid md:grid-cols-2 gap-3">
+      <button onclick="downloadCard()" class="bg-emerald-700 text-white py-3 rounded-xl font-semibold hover:bg-emerald-800 flex items-center justify-center gap-2">
+        <span>📥</span> <span data-i18n="downloadImage"></span>
+      </button>
+      <button onclick="goHome()" class="bg-white border border-gray-300 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-50">
+        <span data-i18n="seeAnother"></span>
+      </button>
+    </div>
+
+    <div class="mt-6 text-center text-sm text-gray-500">
+      <span data-i18n="nosh7Mention"></span> <a href="https://nosh7.in" class="text-emerald-700 underline">nosh7.in</a>
+    </div>
+  </section>
+</main>
+
+<!-- DISCLAIMER FOOTER -->
+<footer class="border-t border-amber-100 bg-amber-50 mt-10">
+  <div class="max-w-5xl mx-auto px-4 py-5 text-xs text-gray-600 text-center" data-i18n="disclaimer"></div>
+</footer>
+
+<!-- HIDDEN IMAGE CARD FOR DOWNLOAD -->
+<div id="share-card">
+  <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px;">
+    <div style="width: 64px; height: 64px; border-radius: 50%; background: #047857; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 24px;">N7</div>
+    <div>
+      <div style="font-size: 28px; font-weight: 700; color: #065f46;" id="sc-brand">NOSH7 Health Plan</div>
+      <div style="font-size: 18px; color: #6b7280;" id="sc-brand-sub">Simple plan for your family</div>
+    </div>
+  </div>
+  <div style="display: flex; align-items: center; gap: 18px; padding: 24px; background: #f0fdf4; border-radius: 20px; margin-bottom: 24px;">
+    <div id="sc-icon" style="font-size: 64px;"></div>
+    <div>
+      <div id="sc-disease" style="font-size: 44px; font-weight: 700; color: #064e3b;"></div>
+      <div id="sc-personal" style="font-size: 20px; color: #6b7280; margin-top: 4px;"></div>
+    </div>
+  </div>
+
+  <div class="share-section" style="background: #d1fae5;">
+    <h3 style="color: #064e3b;">✓ <span id="sc-eat-h"></span></h3>
+    <ul id="sc-eat"></ul>
+  </div>
+  <div class="share-section" style="background: #fee2e2;">
+    <h3 style="color: #7f1d1d;">✕ <span id="sc-avoid-h"></span></h3>
+    <ul id="sc-avoid"></ul>
+  </div>
+  <div class="share-section" style="background: #ffedd5;">
+    <h3 style="color: #7c2d12;">🧘 <span id="sc-yoga-h"></span></h3>
+    <ul id="sc-yoga"></ul>
+  </div>
+  <div class="share-section" style="background: #dbeafe;">
+    <h3 style="color: #1e3a8a;">💡 <span id="sc-life-h"></span></h3>
+    <ul id="sc-life"></ul>
+  </div>
+
+  <div style="border-top: 2px dashed #d1d5db; margin-top: 30px; padding-top: 20px; text-align: center;">
+    <div style="font-size: 18px; color: #9ca3af;" id="sc-disclaimer"></div>
+    <div style="font-size: 22px; font-weight: 600; color: #047857; margin-top: 8px;">nosh7.in</div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// CONTENT - bilingual (Hinglish 'hi' + Gujarati 'gu')
+// ============================================================
+const i18n = {
+  hi: {
+    brandTitle: 'NOSH7 Health Plans',
+    brandSub: 'Aapke parivar ke liye simple plans',
+    heroTitle: 'Sehat ke liye simple plan',
+    heroSub: 'Apni problem chuniye, 3 sawal ka jawab dijiye, aur ek easy plan paayiye - jise aap WhatsApp pe share bhi kar sakte hain.',
+    back: 'Wapas jaaye',
+    qIntro: 'Bas 3 chote sawal - jisse aapka plan thoda personal ban sake.',
+    qAge: 'Aapki umar?',
+    qDuration: 'Kitne time se ye problem hai?',
+    qActivity: 'Aap din mein kitna active rehte hain?',
+    age1: '18 se 35',
+    age2: '35 se 55',
+    age3: '55 se zyada',
+    dur1: '6 mahine se kam',
+    dur2: '6 mahine se 2 saal',
+    dur3: '2 saal se zyada',
+    act1: 'Kam (desk job)',
+    act2: 'Thoda (ghar ka kaam)',
+    act3: 'Zyada (gym/walking)',
+    generatePlan: 'Mera plan banao →',
+    planSub: 'Aapke liye banaya gaya simple plan',
+    eat: 'Ye Khao',
+    avoid: 'Ye Mat Khao',
+    yoga: 'Yoga aur Vyayam',
+    lifestyle: 'Daily Routine',
+    downloadImage: 'Image download karein (WhatsApp ke liye)',
+    seeAnother: 'Doosra plan dekhein',
+    nosh7Mention: 'Healthy meals ghar pe? Visit',
+    disclaimer: 'Ye sirf general health tips hain. Apne doctor se zaroor consultation karein. Dawa ya medical advice ki jagah nahi le sakta.',
+    note55: 'Aapki umar 55+ hai - yoga aaram se start karein, walk 20 min se shuru karein.',
+    noteOld: 'Aapko 2 saal se zyada ye problem hai - doctor se zaroor milein. Ye plan support ke liye hai, dawa ki jagah nahi.',
+    noteLow: 'Aap kam active hain - din mein 5-6 baar 5 minute uthkar chalein.',
+    shareSubtitle: 'Aapke liye banaya gaya plan',
+    shareDisclaimer: 'Ye general info hai. Doctor ki salah zaroor lein.'
+  },
+  gu: {
+    brandTitle: 'NOSH7 સ્વાસ્થ્ય યોજના',
+    brandSub: 'તમારા પરિવાર માટે સરળ યોજનાઓ',
+    heroTitle: 'સ્વાસ્થ્ય માટે સરળ યોજના',
+    heroSub: 'તમારી સમસ્યા પસંદ કરો, ૩ સવાલના જવાબ આપો, અને એક સરળ યોજના મેળવો - જે તમે WhatsApp પર શેર પણ કરી શકો છો.',
+    back: 'પાછા જાવ',
+    qIntro: 'ફક્ત ૩ નાના સવાલ - જેથી તમારી યોજના થોડી તમારી પોતાની બની શકે.',
+    qAge: 'તમારી ઉંમર?',
+    qDuration: 'કેટલા સમયથી આ સમસ્યા છે?',
+    qActivity: 'દિવસમાં તમે કેટલા સક્રિય રહો છો?',
+    age1: '૧૮ થી ૩૫',
+    age2: '૩૫ થી ૫૫',
+    age3: '૫૫ થી વધુ',
+    dur1: '૬ મહિના થી ઓછું',
+    dur2: '૬ મહિના થી ૨ વર્ષ',
+    dur3: '૨ વર્ષ થી વધુ',
+    act1: 'ઓછું (ડેસ્ક જોબ)',
+    act2: 'થોડું (ઘરનું કામ)',
+    act3: 'વધારે (જિમ/ચાલવું)',
+    generatePlan: 'મારી યોજના બનાવો →',
+    planSub: 'તમારા માટે બનાવેલી સરળ યોજના',
+    eat: 'આ ખાવું',
+    avoid: 'આ ન ખાવું',
+    yoga: 'યોગ અને કસરત',
+    lifestyle: 'દૈનિક જીવન',
+    downloadImage: 'ઈમેજ ડાઉનલોડ કરો (WhatsApp માટે)',
+    seeAnother: 'બીજી યોજના જુઓ',
+    nosh7Mention: 'ઘરે હેલ્ધી ભોજન? જુઓ',
+    disclaimer: 'આ ફક્ત સામાન્ય સ્વાસ્થ્ય માહિતી છે. તમારા ડોક્ટરની સલાહ જરૂર લો. આ દવા કે મેડિકલ સલાહનો વિકલ્પ નથી.',
+    note55: 'તમારી ઉંમર ૫૫+ છે - યોગ ધીરે ધીરે કરો, ૨૦ મિનિટ ચાલવાથી શરૂ કરો.',
+    noteOld: 'તમને ૨ વર્ષ થી વધુ આ સમસ્યા છે - ડોક્ટરને જરૂર મળો. આ યોજના ફક્ત મદદ માટે છે, દવાનો વિકલ્પ નથી.',
+    noteLow: 'તમે ઓછા સક્રિય છો - દિવસમાં ૫-૬ વાર ૫ મિનિટ ઊભા થઈને ચાલો.',
+    shareSubtitle: 'તમારા માટે બનાવેલી યોજના',
+    shareDisclaimer: 'આ સામાન્ય માહિતી છે. ડોક્ટરની સલાહ જરૂર લો.'
+  }
+};
+
+// ============================================================
+// DISEASE DATA
+// ============================================================
+const diseases = {
+  diabetes: {
+    icon: '🩸',
+    name: { hi: 'Diabetes (Sugar)', gu: 'ડાયાબિટીસ (સુગર)' },
+    eat: {
+      hi: ['Subah methi paani (1 chamach methi raat ko bhigo dein)', 'Bajra aur jowar ki rotli', 'Karela, methi, palak ki sabji', 'Jamun aur amrood (guava) - 1 din mein 1', 'Dalia, oats, moong dal'],
+      gu: ['સવારે મેથી પાણી (૧ ચમચી મેથી રાત્રે પલાળો)', 'બાજરી અને જુવારની રોટલી', 'કારેલા, મેથી, પાલકનું શાક', 'જામફળ અને જાંબુ (દિવસમાં ૧)', 'ડાળિયા, ઓટ્સ, મગ દાળ']
+    },
+    avoid: {
+      hi: ['Khand aur mithai', 'Safed chawal (zyada matra)', 'Maida, biscuit, bakery items', 'Phalon ka juice (phal khao)', 'Tala hua khana'],
+      gu: ['ખાંડ અને મીઠાઈ', 'સફેદ ચોખા (વધુ માત્રામાં)', 'મેંદો, બિસ્કિટ, બેકરી વસ્તુઓ', 'ફળોનો રસ (આખું ફળ ખાવું)', 'તળેલું ખાવાનું']
+    },
+    yoga: {
+      hi: ['Vajrasana - khaane ke baad 5 minute', 'Mandukasana - din mein 3 baar', 'Surya Namaskar - 5 round', 'Kapalbhati - 5 minute', 'Anulom Vilom - 10 minute'],
+      gu: ['વજ્રાસન - જમ્યા પછી ૫ મિનિટ', 'મંડૂકાસન - દિવસમાં ૩ વાર', 'સૂર્ય નમસ્કાર - ૫ વાર', 'કપાલભાતિ - ૫ મિનિટ', 'અનુલોમ વિલોમ - ૧૦ મિનિટ']
+    },
+    lifestyle: {
+      hi: ['Roz 30 minute chalna (specially dinner ke baad)', 'Raat ko 7-8 ghante ki neend', 'Din mein 4 chote bhojan, lambi gap mat rakhein', '8-10 glass paani peena', 'Stress kam - 10 minute meditation'],
+      gu: ['રોજ ૩૦ મિનિટ ચાલવું (ખાસ કરીને જમ્યા પછી)', 'રાત્રે ૭-૮ કલાક ઊંઘ', 'દિવસમાં ૪ નાના ભોજન, લાંબો ગેપ ન રાખવો', '૮-૧૦ ગ્લાસ પાણી', 'તણાવ ઓછો - ૧૦ મિનિટ ધ્યાન']
+    }
+  },
+  thyroid: {
+    icon: '🦋',
+    name: { hi: 'Hypothyroid (Thyroid)', gu: 'હાઇપોથાયરોઇડ (થાયરોઇડ)' },
+    eat: {
+      hi: ['Roz 1 tukda nariyal (kaccha)', 'Dahi, paneer aur doodh', 'Iodine wala namak', 'Palak, beet, methi', 'Kaddu aur surajmukhi ke beej'],
+      gu: ['રોજ ૧ ટુકડો કોપરું (કાચું)', 'દહીં, પનીર અને દૂધ', 'આયોડિન વાળું મીઠું', 'પાલક, બીટ, મેથી', 'કોળાના અને સૂરજમુખીના બીજ']
+    },
+    avoid: {
+      hi: ['Soya products (zyada matra)', 'Kachi gobhi, broccoli (zyada)', 'Processed aur packaged food', 'Zyada chai aur coffee', 'Refined sugar aur sweets'],
+      gu: ['સોયા ઉત્પાદનો (વધુ માત્રામાં)', 'કાચી કોબી, બ્રોકોલી (વધુ)', 'પ્રોસેસ્ડ અને પેકેટ ફૂડ', 'વધુ ચા અને કોફી', 'રિફાઈન્ડ ખાંડ અને મીઠાઈ']
+    },
+    yoga: {
+      hi: ['Sarvangasana - 1-2 minute (deewar ka sahara lekar)', 'Matsyasana (fish pose)', 'Halasana - dheere se', 'Simhasana (lion pose) - 3 baar', 'Ujjayi pranayama - 5 minute'],
+      gu: ['સર્વાંગાસન - ૧-૨ મિનિટ (દીવાલના ટેકાથી)', 'મત્સ્યાસન (માછલી આસન)', 'હલાસન - ધીરે ધીરે', 'સિંહાસન - ૩ વાર', 'ઉજ્જાયી પ્રાણાયામ - ૫ મિનિટ']
+    },
+    lifestyle: {
+      hi: ['Dawa khaali pet le (khaane se 1 ghante pehle)', 'Raat ko 8 ghante ki neend', 'Subah 15 minute dhoop mein bethein', 'Roz 30 minute chalna', 'Stress se bachein - tension thyroid badhata hai'],
+      gu: ['દવા ખાલી પેટે લેવી (જમવાના ૧ કલાક પહેલાં)', 'રાત્રે ૮ કલાક ઊંઘ', 'સવારે ૧૫ મિનિટ તડકામાં બેસવું', 'રોજ ૩૦ મિનિટ ચાલવું', 'તણાવ ટાળો - ટેન્શન થાયરોઇડ વધારે છે']
+    }
+  },
+  pcod: {
+    icon: '🌸',
+    name: { hi: 'PCOD / PCOS', gu: 'પીસીઓડી / પીસીઓએસ' },
+    eat: {
+      hi: ['Subah dalchini (cinnamon) ka paani', 'Raat ko bhigoye methi daane (subah khali pet)', 'Alsi (flax) aur kaddu ke beej', 'Sprouts, moong, palak', 'Berries aur amrood (less sugar phal)'],
+      gu: ['સવારે તજ (ચીની)નું પાણી', 'રાત્રે પલાળેલા મેથી દાણા (સવારે ખાલી પેટે)', 'અળસી અને કોળાના બીજ', 'ફણગાવેલા કઠોળ, મગ, પાલક', 'બેરી અને જામફળ (ઓછી ખાંડ વાળા ફળ)']
+    },
+    avoid: {
+      hi: ['Khand, mithai, chocolate', 'Maida, white bread, pasta', 'Zyada doodh aur dahi', 'Tala hua, fast food', 'Cold drinks aur packaged juice'],
+      gu: ['ખાંડ, મીઠાઈ, ચોકલેટ', 'મેંદો, સફેદ બ્રેડ, પાસ્તા', 'વધારે દૂધ અને દહીં', 'તળેલું, ફાસ્ટ ફૂડ', 'કોલ્ડ ડ્રિંક અને પેકેજ્ડ જ્યૂસ']
+    },
+    yoga: {
+      hi: ['Butterfly pose (Baddha Konasana) - 10 minute', 'Bhujangasana (cobra) - 5 baar', 'Dhanurasana (bow pose)', 'Malasana (squat) - 5 minute', 'Kapalbhati - 5 minute'],
+      gu: ['બટરફ્લાય આસન (બદ્ધ કોણાસન) - ૧૦ મિનિટ', 'ભુજંગાસન (કોબ્રા) - ૫ વાર', 'ધનુરાસન (બો પોઝ)', 'મલાસન (ઉકડૂ બેસવું) - ૫ મિનિટ', 'કપાલભાતિ - ૫ મિનિટ']
+    },
+    lifestyle: {
+      hi: ['Raat 11 baje se pehle so jaayein', 'Roz 10000 kadam chalein', 'Maasik dharm (period) calendar mein note karein', 'Stress kam karein - meditation aur deep breathing', 'Plastic ki bottle aur container kam istemaal karein'],
+      gu: ['રાત્રે ૧૧ વાગ્યા પહેલાં સૂઈ જવું', 'રોજ ૧૦૦૦૦ પગલા ચાલવું', 'માસિક ધર્મનું કેલેન્ડર નોંધવું', 'તણાવ ઓછો કરો - ધ્યાન અને ઊંડા શ્વાસ', 'પ્લાસ્ટિક બોટલ અને કન્ટેનર ઓછા વાપરો']
+    }
+  },
+  weight_loss: {
+    icon: '⚖️',
+    name: { hi: 'Weight Loss', gu: 'વજન ઘટાડવું' },
+    eat: {
+      hi: ['Sprouts, moong dal, chana - protein ke liye', 'Salad - aadhi plate har bhojan mein', 'Roz 1-2 phal (apple, papita, amrood)', 'Low fat paneer aur dahi', 'Jeera paani aur nimbu paani'],
+      gu: ['ફણગાવેલા કઠોળ, મગ દાળ, ચણા - પ્રોટીન માટે', 'સલાડ - દરેક ભોજનમાં અડધી પ્લેટ', 'રોજ ૧-૨ ફળ (સફરજન, પપૈયા, જામફળ)', 'ઓછી ચરબી વાળા પનીર અને દહીં', 'જીરા પાણી અને લીંબુ પાણી']
+    },
+    avoid: {
+      hi: ['Khand aur maida', 'Tala hua aur fried', 'Mithai aur cold drinks', 'Raat ko der se khaana', 'Packaged snacks (chips, biscuits)'],
+      gu: ['ખાંડ અને મેંદો', 'તળેલું અને ફ્રાઇડ', 'મીઠાઈ અને કોલ્ડ ડ્રિંક', 'રાત્રે મોડું જમવું', 'પેકેજ્ડ સ્નેક્સ (ચિપ્સ, બિસ્કિટ)']
+    },
+    yoga: {
+      hi: ['Surya Namaskar - 10-12 round', 'Plank - 1 minute', 'Naukasana (boat pose)', 'Trikonasana (triangle)', 'Kapalbhati - 5 minute'],
+      gu: ['સૂર્ય નમસ્કાર - ૧૦-૧૨ વાર', 'પ્લેન્ક - ૧ મિનિટ', 'નૌકાસન (બોટ પોઝ)', 'ત્રિકોણાસન', 'કપાલભાતિ - ૫ મિનિટ']
+    },
+    lifestyle: {
+      hi: ['Roz 10000 kadam chalein', 'Raat 8 baje se pehle dinner', '7-8 ghante ki neend', 'Roz 3 litre paani peena', 'Hafte mein 1 baar wajan tolein, roz nahi'],
+      gu: ['રોજ ૧૦૦૦૦ પગલા ચાલવું', 'રાત્રે ૮ વાગ્યા પહેલાં ડિનર', '૭-૮ કલાક ઊંઘ', 'રોજ ૩ લિટર પાણી', 'અઠવાડિયે ૧ વાર વજન કરવું, રોજ નહીં']
+    }
+  },
+  hair_skin: {
+    icon: '✨',
+    name: { hi: 'Hair aur Skin', gu: 'વાળ અને ત્વચા' },
+    eat: {
+      hi: ['Roz 1 amla (raw, juice ya powder)', 'Akhrot aur badam (5-6 daane)', 'Til (sesame) aur kaddu ke beej', 'Palak, beet, gajar', 'Dahi aur doodh'],
+      gu: ['રોજ ૧ આમળું (કાચું, જ્યૂસ કે પાવડર)', 'અખરોટ અને બદામ (૫-૬ દાણા)', 'તલ અને કોળાના બીજ', 'પાલક, બીટ, ગાજર', 'દહીં અને દૂધ']
+    },
+    avoid: {
+      hi: ['Junk food aur fried', 'Zyada chai/coffee', 'Mithai aur khand', 'Der raat tak jaagna', 'Zyada namak'],
+      gu: ['જંક ફૂડ અને તળેલું', 'વધુ ચા/કોફી', 'મીઠાઈ અને ખાંડ', 'મોડી રાત સુધી જાગવું', 'વધારે મીઠું']
+    },
+    yoga: {
+      hi: ['Adho Mukha Svanasana (downward dog) - 1 min', 'Ustrasana (camel pose)', 'Anulom Vilom - 10 minute', 'Bhramari pranayama - 5 minute', 'Surya Namaskar - 5 round'],
+      gu: ['અધો મુખ શ્વાનાસન (ડાઉનવર્ડ ડોગ) - ૧ મિનિટ', 'ઉષ્ટ્રાસન (કેમલ પોઝ)', 'અનુલોમ વિલોમ - ૧૦ મિનિટ', 'ભ્રામરી પ્રાણાયામ - ૫ મિનિટ', 'સૂર્ય નમસ્કાર - ૫ વાર']
+    },
+    lifestyle: {
+      hi: ['8-10 glass paani roz', '8 ghante ki achi neend', 'Hafte mein 1 baar nariyal tel se champi', 'Din mein 2 baar muh dhoyein', 'Subah 15 minute dhoop'],
+      gu: ['૮-૧૦ ગ્લાસ પાણી રોજ', '૮ કલાક સારી ઊંઘ', 'અઠવાડિયે ૧ વાર નારિયેળ તેલ થી માલિશ', 'દિવસમાં ૨ વાર મોં ધોવું', 'સવારે ૧૫ મિનિટ તડકો']
+    }
+  },
+  weakness: {
+    icon: '💪',
+    name: { hi: 'Weakness aur Kam Wajan', gu: 'નબળાઈ અને ઓછું વજન' },
+    eat: {
+      hi: ['Banana shake (kele aur doodh)', 'Bhigoye sukhe mewe (badam, kishmish, khajoor)', 'Ghee ke saath rotli aur khichdi', 'Paneer, cheese, full fat doodh', 'Raat ko ashwagandha doodh'],
+      gu: ['કેળાનો શેક (કેળું અને દૂધ)', 'પલાળેલા સૂકા મેવા (બદામ, કિસમિસ, ખજૂર)', 'ઘી સાથે રોટલી અને ખીચડી', 'પનીર, ચીઝ, ફુલ ફેટ દૂધ', 'રાત્રે અશ્વગંધા દૂધ']
+    },
+    avoid: {
+      hi: ['Bhojan skip karna', 'Khali pet zyada chai', 'Junk food aur cold drinks', 'Bahut zyada upvas', 'Tea/coffee dinner ke baad'],
+      gu: ['ભોજન છોડવું', 'ખાલી પેટે વધુ ચા', 'જંક ફૂડ અને કોલ્ડ ડ્રિંક', 'ખૂબ વધારે ઉપવાસ', 'જમ્યા પછી ચા/કોફી']
+    },
+    yoga: {
+      hi: ['Dheere se Surya Namaskar - 5 round', 'Bhujangasana (cobra)', 'Pawanmuktasana', 'Anulom Vilom - 5 minute', 'Hafte mein 3 baar weight training'],
+      gu: ['ધીરે ધીરે સૂર્ય નમસ્કાર - ૫ વાર', 'ભુજંગાસન (કોબ્રા)', 'પવનમુક્તાસન', 'અનુલોમ વિલોમ - ૫ મિનિટ', 'અઠવાડિયે ૩ વાર વેઈટ ટ્રેનિંગ']
+    },
+    lifestyle: {
+      hi: ['Din mein 5-6 baar chota chota khana', '8-9 ghante ki neend', 'Roz 30 minute dhoop', 'Sone se pehle kela aur doodh', 'Strength training - muscle banane ke liye'],
+      gu: ['દિવસમાં ૫-૬ વાર નાનું નાનું ખાવું', '૮-૯ કલાક ઊંઘ', 'રોજ ૩૦ મિનિટ તડકો', 'સૂતા પહેલાં કેળું અને દૂધ', 'સ્ટ્રેન્થ ટ્રેનિંગ - સ્નાયુ બનાવવા']
+    }
+  }
+};
+
+// ============================================================
+// STATE
+// ============================================================
+let currentLang = 'hi';
+let currentDisease = null;
+let answers = { age: null, duration: null, activity: null };
+
+// ============================================================
+// LANGUAGE
+// ============================================================
+function setLang(lang) {
+  currentLang = lang;
+  document.body.classList.remove('lang-hi', 'lang-gu');
+  document.body.classList.add('lang-' + lang);
+  document.documentElement.lang = lang === 'gu' ? 'gu' : 'en';
+
+  // toggle buttons
+  document.querySelectorAll('.lang-toggle button').forEach((b, i) => {
+    b.classList.toggle('active', (lang === 'hi' && i === 0) || (lang === 'gu' && i === 1));
+  });
+
+  applyI18n();
+  renderHome();
+  // re-render whichever screen is visible
+  if (!document.getElementById('screen-questions').hidden && currentDisease) showQuestions(currentDisease);
+  if (!document.getElementById('screen-plan').hidden && currentDisease) showPlan();
+}
+
+function applyI18n() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (i18n[currentLang][key]) el.textContent = i18n[currentLang][key];
+  });
+}
+
+// ============================================================
+// HOME SCREEN - render disease cards
+// ============================================================
+function renderHome() {
+  const grid = document.querySelector('#screen-home .grid');
+  grid.innerHTML = '';
+  Object.keys(diseases).forEach(key => {
+    const d = diseases[key];
+    const card = document.createElement('div');
+    card.className = 'disease-card bg-white rounded-2xl p-4 md:p-5 border border-amber-100 shadow-sm flex flex-col items-center text-center';
+    card.onclick = () => showQuestions(key);
+    card.innerHTML = `
+      <div class="text-4xl md:text-5xl mb-2">${d.icon}</div>
+      <div class="font-semibold text-emerald-900 text-sm md:text-base leading-tight">${d.name[currentLang]}</div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+// ============================================================
+// QUESTIONS SCREEN
+// ============================================================
+function showQuestions(diseaseKey) {
+  currentDisease = diseaseKey;
+  answers = { age: null, duration: null, activity: null };
+
+  document.getElementById('screen-home').hidden = true;
+  document.getElementById('screen-questions').hidden = false;
+  document.getElementById('screen-plan').hidden = true;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  const d = diseases[diseaseKey];
+  document.getElementById('q-icon').textContent = d.icon;
+  document.getElementById('q-disease').textContent = d.name[currentLang];
+
+  buildPills('q-age', 'age', ['age1', 'age2', 'age3']);
+  buildPills('q-duration', 'duration', ['dur1', 'dur2', 'dur3']);
+  buildPills('q-activity', 'activity', ['act1', 'act2', 'act3']);
+  applyI18n();
+  updateGenerateBtn();
+}
+
+function buildPills(containerId, field, keys) {
+  const c = document.getElementById(containerId);
+  c.innerHTML = '';
+  keys.forEach((k, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'pill-btn border border-gray-300 rounded-full px-4 py-2 text-sm bg-white';
+    btn.textContent = i18n[currentLang][k];
+    btn.onclick = () => {
+      answers[field] = idx + 1;
+      [...c.children].forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      updateGenerateBtn();
+    };
+    c.appendChild(btn);
+  });
+}
+
+function updateGenerateBtn() {
+  const ready = answers.age && answers.duration && answers.activity;
+  document.getElementById('generate-btn').disabled = !ready;
+}
+
+// ============================================================
+// PLAN SCREEN
+// ============================================================
+function showPlan() {
+  document.getElementById('screen-home').hidden = true;
+  document.getElementById('screen-questions').hidden = true;
+  document.getElementById('screen-plan').hidden = false;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  const d = diseases[currentDisease];
+  document.getElementById('p-icon').textContent = d.icon;
+  document.getElementById('p-disease').textContent = d.name[currentLang];
+
+  // personal note logic
+  const notes = [];
+  if (answers.age === 3) notes.push(i18n[currentLang].note55);
+  if (answers.duration === 3) notes.push(i18n[currentLang].noteOld);
+  if (answers.activity === 1) notes.push(i18n[currentLang].noteLow);
+
+  const noteBox = document.getElementById('personal-note');
+  if (notes.length) {
+    noteBox.innerHTML = notes.map(n => `<div class="mb-1">⚠️ ${n}</div>`).join('');
+    noteBox.hidden = false;
+  } else {
+    noteBox.hidden = true;
+  }
+
+  fillSection('p-eat', d.eat[currentLang], 'green');
+  fillSection('p-avoid', d.avoid[currentLang], 'red');
+  fillSection('p-yoga', d.yoga[currentLang], 'orange');
+  fillSection('p-lifestyle', d.lifestyle[currentLang], 'blue');
+
+  applyI18n();
+}
+
+function fillSection(id, items, color) {
+  const c = document.getElementById(id);
+  c.innerHTML = '';
+  items.forEach((it, i) => {
+    const row = document.createElement('div');
+    row.className = 'item-row text-sm md:text-base';
+    row.innerHTML = `<span class="icon-circle bg-white text-${color}-700 font-bold">${i + 1}</span><span>${it}</span>`;
+    c.appendChild(row);
+  });
+}
+
+function goHome() {
+  document.getElementById('screen-home').hidden = false;
+  document.getElementById('screen-questions').hidden = true;
+  document.getElementById('screen-plan').hidden = true;
+  currentDisease = null;
+  answers = { age: null, duration: null, activity: null };
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ============================================================
+// IMAGE DOWNLOAD
+// ============================================================
+async function downloadCard() {
+  const d = diseases[currentDisease];
+  const card = document.getElementById('share-card');
+  card.classList.remove('lang-hi', 'lang-gu');
+  card.classList.add('lang-' + currentLang);
+
+  document.getElementById('sc-brand').textContent = i18n[currentLang].brandTitle;
+  document.getElementById('sc-brand-sub').textContent = i18n[currentLang].brandSub;
+  document.getElementById('sc-icon').textContent = d.icon;
+  document.getElementById('sc-disease').textContent = d.name[currentLang];
+  document.getElementById('sc-personal').textContent = i18n[currentLang].shareSubtitle;
+  document.getElementById('sc-disclaimer').textContent = i18n[currentLang].shareDisclaimer;
+
+  document.getElementById('sc-eat-h').textContent = i18n[currentLang].eat;
+  document.getElementById('sc-avoid-h').textContent = i18n[currentLang].avoid;
+  document.getElementById('sc-yoga-h').textContent = i18n[currentLang].yoga;
+  document.getElementById('sc-life-h').textContent = i18n[currentLang].lifestyle;
+
+  fillUL('sc-eat', d.eat[currentLang]);
+  fillUL('sc-avoid', d.avoid[currentLang]);
+  fillUL('sc-yoga', d.yoga[currentLang]);
+  fillUL('sc-life', d.lifestyle[currentLang]);
+
+  // wait for fonts to be ready
+  if (document.fonts && document.fonts.ready) await document.fonts.ready;
+
+  const canvas = await html2canvas(card, {
+    scale: 1,
+    backgroundColor: '#ffffff',
+    useCORS: true,
+    logging: false
+  });
+
+  const link = document.createElement('a');
+  link.download = `nosh7-${currentDisease}-${currentLang}-plan.png`;
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+
+function fillUL(id, items) {
+  const ul = document.getElementById(id);
+  ul.innerHTML = '';
+  items.forEach(it => {
+    const li = document.createElement('li');
+    li.textContent = it;
+    ul.appendChild(li);
+  });
+}
+
+// ============================================================
+// INIT
+// ============================================================
+applyI18n();
+renderHome();
+</script>
+</body>
+</html>
